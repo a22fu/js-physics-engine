@@ -1,13 +1,22 @@
-import {Vec} from "./Vector.ts"
-import {RigidBody} from "../bodies/RigidBody"
+import { Vec } from "./Vector.ts";
+import { RigidBody } from "../bodies/RigidBody";
 
 // Axis Aligned Bounding Box, simple rectangle perpendicular to boh axes
-export class AABB extends RigidBody{
-    min: Vec;
-    max: Vec;
-    constructor(min: Vec, max: Vec, mass:number, velocity:Vec, acceleration:Vec){
-        super("AABB", mass, velocity, acceleration);
-        this.min = min;
-        this.max = max;
-    }
+export class AABB extends RigidBody {
+  min: Vec;
+  max: Vec;
+  pos: Vec;
+  AABBOptions = {
+    max: 0,
+    min: 0,
+  };
+  constructor(options: any) {
+    super(options);
+    this.min = options.min || this.AABBOptions.min;
+    this.max = options.max || this.AABBOptions.max;
+    this.pos = {
+      x: (this.min.x + this.max.x) / 2,
+      y: (this.min.y + this.max.y) / 2,
+    };
+  }
 }

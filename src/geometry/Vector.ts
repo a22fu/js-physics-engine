@@ -5,11 +5,13 @@ export class Vec{
     static sub: (v: Vec, w: Vec) => { x: number; y: number; };
     static div: (v: Vec, n: number) => Vec;
     static mul: (v: Vec, n: number) => Vec;
-    static magnitude: (v: Vec) => number;
-    static magnitudeSquared: (v: Vec) => number;
+    static mag: (v: Vec) => number;
+    static magSqr: (v: Vec) => number;
     static dot: (v: Vec, w: Vec) => number;
     static cross: (v: Vec, w: Vec) => number;
     static normalize: (v: Vec) => Vec;
+    static distsqr: (v: Vec, w: Vec) => number;
+    static dist: (v: Vec, w: Vec) => number;
 
     /**
      * Creates a vector
@@ -68,7 +70,7 @@ Vec.div = function(v:Vec, n: number): Vec{
  * @param v vector
  * @returns {number} magnitude/length of vector
  */
-Vec.magnitude = function(v: Vec): number{
+Vec.mag = function(v: Vec): number{
     return Math.sqrt((this.x * this.x) + (this.y * this.y));
 };
 
@@ -77,7 +79,7 @@ Vec.magnitude = function(v: Vec): number{
  * @param v vector
  * @returns {number} magnitude squared of vector
  */
-Vec.magnitudeSquared = function(v: Vec): number{
+Vec.magSqr = function(v: Vec): number{
     return (this.x * this.x) + (this.y * this.y);
 };
 
@@ -107,8 +109,28 @@ Vec.cross = function(v: Vec, w: Vec): number{
  * @returns vector stretched to magnitude 1
  */
 Vec.normalize = function(v: Vec): Vec{
-    if(Vec.magnitude(v) == 0){
+    if(Vec.mag(v) == 0){
         return {x:0, y:0};
     }
-    return {x:v.x/Vec.magnitude(v), y:v.y/Vec.magnitude(v)};    
+    return {x:v.x/Vec.mag(v), y:v.y/Vec.mag(v)};    
 }
+
+/**
+ * returns distance squared of two vectors
+ * @param v vector1
+ * @param w vector2
+ * @returns distance squared of two vectors
+ */
+Vec.distsqr = function(v: Vec, w: Vec): number{
+    return (w.x - v.x)^2 + (w.y - v.y)^2;
+};
+
+/**
+ * returns distance of two vectors
+ * @param v vector1
+ * @param w vector2
+ * @returns distance of two vectors
+ */
+Vec.dist = function(v: Vec, w: Vec): number{
+    return Math.sqrt((w.x - v.x)^2 + (w.y - v.y)^2);
+};

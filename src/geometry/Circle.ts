@@ -6,10 +6,18 @@ export class Circle extends RigidBody{
     radius: number;
     x: number;
     y: number;
-    constructor(radius: number, position: Vec, mass:number, velocity = {x: 0, y:0}, acceleration: Vec){
-        super("Circle", mass, velocity, acceleration);
-        this.radius = radius;
-        this.x = position.x;
-        this.y = position.y;
+    pos = {x:0, y:0};
+    circleOptions = {
+        radius: 0,
+        x: 0,
+        y: 0
+    }
+
+    constructor(options:any){
+        super(options);
+        this.radius = options.radius || this.circleOptions.radius;
+        this.x = options.position.x || this.circleOptions.x;
+        this.y = options.position.y || this.circleOptions.y;
+        this.pos = {x:this.x, y:this.y};
     }
 }
