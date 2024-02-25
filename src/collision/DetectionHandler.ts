@@ -4,7 +4,6 @@ import { AABB } from "../geometry/AABB";
 
 import { RigidBody } from "../bodies/RigidBody";
 
-/// Unused
 export class DetectionHandler {
   static detectCircleCircleCollision(circle1, circle2) {
     // Implement detection logic for circles

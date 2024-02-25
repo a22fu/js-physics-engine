@@ -5,7 +5,6 @@ import { RigidBody } from "../bodies/RigidBody";
 export class AABB extends RigidBody {
   min: Vec;
   max: Vec;
-  pos: Vec;
   AABBOptions = {
     max: 0,
     min: 0,
@@ -14,7 +13,7 @@ export class AABB extends RigidBody {
     super(options);
     this.min = options.min || this.AABBOptions.min;
     this.max = options.max || this.AABBOptions.max;
-    this.pos = {
+    this.position = {
       x: (this.min.x + this.max.x) / 2,
       y: (this.min.y + this.max.y) / 2,
     };
