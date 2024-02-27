@@ -31,33 +31,28 @@ export class CollisionHandler {
       const normal = manifold.normal;
       const nv = Vec.dot(rv, normal);
       if (nv > 0) return;
-
-      const e = Math.min(A.material.restitution, B.material.restitution);
+      const e = 1;
+      // const e = Math.min(A.material.restitution, B.material.restitution);
       // impulse scalar
-      const i = (-(1 + e) * nv) / (1 / A.massData.mass + 1 / B.massData.mass);
-      const impulse = Vec.mul(normal, i);
-      const mass_sum = A.massData.mass + B.massData.mass;
-      let ratio = A.massData.mass / mass_sum;
-      A.velocity = Vec.sub(A.velocity, Vec.mul(impulse, ratio));
-      ratio = B.massData.mass / mass_sum;
-      B.velocity = Vec.add(B.velocity, Vec.mul(impulse, ratio));
+      const j = (-(1 + e) * nv) / (1 / A.massData.mass + 1 / B.massData.mass);
+      const impulse = Vec.mul(normal, j);
+      A.velocity = Vec.sub(A.velocity, Vec.mul(impulse, 1 / A.massData.mass));
+      B.velocity = Vec.add(B.velocity, Vec.mul(impulse, 1 / B.massData.mass));
+      this.PositionalCorrection(A, B, manifold);
     }
   }
 
-  PositionalCorrection(A: RigidBody, B: RigidBody) {
+  PositionalCorrection(A: RigidBody, B: RigidBody, manifold: Manifold) {
     const percent = 0.2; // usually 20% to 80%
     const slop = 0.01; // usually 0.01 to 0.1
-    const key = `${A.constructor.name}-${B.constructor.name}`;
-    const handlers = this.collisionMap[key];
-    const manifold = handlers.manifoldHandler(A, B);
 
     let correction = Vec.mul(
       manifold.normal,
-      (Math.max(manifold.penetration - slop) /
-        (A.massData.iMass + B.massData.iMass)) *
+      (Math.max(manifold.penetration - slop, 0) /
+        (1 / A.massData.mass + 1 / B.massData.mass)) *
         percent
     );
-    A.position = Vec.sub(A.position, Vec.mul(correction, A.massData.iMass));
-    B.position = Vec.add(B.position, Vec.mul(correction, A.massData.iMass));
+    A.position = Vec.sub(A.position, Vec.mul(correction, 1 / A.massData.mass));
+    B.position = Vec.add(B.position, Vec.mul(correction, 1 / B.massData.mass));
   }
 }

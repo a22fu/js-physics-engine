@@ -25,7 +25,9 @@ export class AABB extends RigidBody {
   }
 
   draw(canvas: HTMLCanvasElement) {
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    ctx.lineWidth = 0.7;
+
     ctx?.beginPath();
     ctx?.rect(this.min.x, this.min.y, this.length, this.height);
     ctx?.stroke();
