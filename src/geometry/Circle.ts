@@ -28,4 +28,16 @@ export class Circle extends RigidBody {
     );
     ctx?.stroke();
   }
+
+  updatePhysics(deltaTime: number): void {
+    if (this.massData.mass && this.massData.mass != 0) {
+      this.velocity = Vec.add(
+        this.velocity,
+        Vec.mul(this.force, deltaTime / this.massData.mass)
+      );
+    } else {
+    }
+
+    this.position = Vec.add(this.position, Vec.mul(this.velocity, deltaTime));
+  }
 }

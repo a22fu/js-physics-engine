@@ -28,4 +28,7 @@ export class RigidBody {
   draw(canvas: HTMLCanvasElement) {
     console.log("ERR: Draw not implemented");
   }
+  updatePhysics(deltaTime: number) {
+    console.log("ERR: Update not implemented");
+  }
 }

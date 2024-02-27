@@ -12,12 +12,12 @@ export class ManifoldFactory {
   normal: Vec;
   constructor() {}
 
-  static circleCircle(circle1: Circle, circle2: Circle) {
+  static circleCircle(circle1: Circle, circle2: Circle): Manifold {
     let m = new Manifold(circle1, circle2);
 
     const n = Vec.sub(m.B.position, m.A.position);
-    const r = m.A.radius + m.B.radius;
-    var d = Vec.mag(n);
+    const d = Vec.mag(n);
+    const r = circle1.radius + circle2.radius;
 
     if (d != 0) {
       m.penetration = r - d;
@@ -30,52 +30,33 @@ export class ManifoldFactory {
     }
   }
 
-  static AABBCircle(aabb: AABB, circle: Circle) {
+  static aabbCircle(aabb: AABB, circle: Circle): Manifold {
     var m = new Manifold(aabb, circle);
 
-    m.A = circle;
-    m.B = aabb;
-
-    var n = Vec.sub(m.B.position, m.A.position);
-    var closest = n;
-    var x_extent = (m.A.aabb.max.x - m.A.aabb.min.x) / 2;
-    var y_extent = (m.A.aabb.max.y - m.A.aabb.min.y) / 2;
-    closest.x = Math.max(-x_extent, Math.min(x_extent, closest.x));
-    closest.y = Math.max(-y_extent, Math.min(y_extent, closest.y));
-
-    var inside = false;
-
-    if (n == closest) {
-      inside = true;
-      if (Math.abs(n.x) > Math.abs(n.y)) {
-        if (closest.x > 0) {
-          closest.x = x_extent;
-        } else {
-          closest.x = -x_extent;
-        }
-      } else {
-        if (closest.y > 0) {
-          closest.y = y_extent;
-        } else {
-          closest.y = -y_extent;
-        }
-      }
+    function pointClamp(point, minVal, maxVal) {
+      return Math.max(Math.min(point, maxVal), minVal);
     }
-    var normal = Vec.sub(n, closest);
-    var d = Vec.magSqr(normal);
-    var r = m.B.radius;
+    const closestPoint = { x: 0, y: 0 };
 
-    if (d > r * r && !inside) return false;
-    d = Math.sqrt(d);
+    closestPoint.x = pointClamp(circle.position.x, aabb.min.x, aabb.max.x);
+    closestPoint.y = pointClamp(circle.position.y, aabb.min.y, aabb.max.y);
 
-    if (inside) {
-      m.normal = Vec.sub({ x: 0, y: 0 }, n);
-      m.penetration = r - d;
-    } else {
-      m.normal = n;
+    const n = Vec.sub(closestPoint, circle.position);
+    const d = Vec.mag(n);
+    const r = circle.radius;
+
+    if (d != 0) {
+      m.normal = {
+        x: n.x / d,
+        y: n.y / d,
+      };
       m.penetration = r - d;
     }
-    return true;
+    return m;
+  }
+
+  static circleAABB(circle: Circle, aabb: AABB): Manifold {
+    return ManifoldFactory.aabbCircle(aabb, circle);
   }
 
   static AABBAABB(aabb1, aabb2) {

@@ -13,6 +13,14 @@ export class CollisionHandler {
       manifold: ManifoldFactory.circleCircle,
       detection: DH.detectCircleCircleCollision,
     },
+    "AABB-Circle": {
+      manifold: ManifoldFactory.aabbCircle,
+      detection: DH.detectAABBCircleCollision,
+    },
+    "Circle-AABB": {
+      manifold: ManifoldFactory.circleAABB,
+      detection: DH.detectCircleAABBCollision,
+    },
   };
 
   detectCollision(A: RigidBody, B: RigidBody): boolean {

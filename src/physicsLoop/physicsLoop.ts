@@ -21,15 +21,7 @@ export class physicsLoop {
     for (const body of this.bodies) {
       // v += (1/m * F) * dt
       // x += v * dt
-      if (body.massData.mass && body.massData.mass != 0) {
-        body.velocity = Vec.add(
-          body.velocity,
-          Vec.mul(body.force, deltaTime / body.massData.mass)
-        );
-      } else {
-      }
-
-      body.position = Vec.add(body.position, Vec.mul(body.velocity, deltaTime));
+      body.updatePhysics(deltaTime);
     }
 
     for (let i = 0; i < this.bodies.length; i++) {
