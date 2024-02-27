@@ -3,8 +3,6 @@ import { RigidBody } from "../bodies/RigidBody";
 
 export class Circle extends RigidBody {
   radius: number;
-  x: number;
-  y: number;
   circleOptions = {
     radius: 0,
     x: 0,
@@ -14,8 +12,19 @@ export class Circle extends RigidBody {
   constructor(options: any) {
     super(options);
     this.radius = options.radius || this.circleOptions.radius;
-    this.x = options.position.x || this.circleOptions.x;
-    this.y = options.position.y || this.circleOptions.y;
-    this.position = { x: this.x, y: this.y };
+  }
+
+  draw(canvas: HTMLCanvasElement) {
+    const ctx = canvas.getContext("2d");
+    ctx?.beginPath();
+    ctx?.arc(
+      this.position.x,
+      this.position.y,
+      this.radius,
+      0,
+      2 * Math.PI,
+      false
+    );
+    ctx?.stroke();
   }
 }

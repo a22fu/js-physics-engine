@@ -25,4 +25,7 @@ export class RigidBody {
     this.material = options.material || this.defaultOptions.material;
     this.position = options.position || this.defaultOptions.position;
   }
+  draw(canvas: HTMLCanvasElement) {
+    console.log("ERR: Draw not implemented");
+  }
 }
