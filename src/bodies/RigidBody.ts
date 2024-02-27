@@ -12,7 +12,7 @@ export class RigidBody {
   velocity: Vec;
   force: Vec;
   defaultOptions = {
-    massData: { mass: 0, iMass: 0, intertia: 0, iInertia: 0 },
+    massData: { mass: 10, iMass: 1 / 10, intertia: 0, iInertia: 0 },
     material: { restitution: 0, density: 0 },
     position: { x: 0, y: 0 },
     velocity: { x: 0, y: 0 },

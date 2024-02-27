@@ -8,42 +8,39 @@ import { RigidBody } from "../bodies/RigidBody";
 import { ManifoldFactory } from "./ManifoldFactory";
 
 export class CollisionHandler {
-  collisionMap = new Map<string, Object>();
+  collisionMap = {
+    "Circle-Circle": {
+      manifold: ManifoldFactory.circleCircle,
+      detection: DH.detectCircleCircleCollision,
+    },
+  };
 
-  registerCollisionHandler(body1, body2, detectionHandler, manifoldHandler) {
-    const key = `${body1.name}-${body2.name}`;
-    this.collisionMap[key] = { detectionHandler, manifoldHandler };
+  detectCollision(A: RigidBody, B: RigidBody): boolean {
+    const key = `${A.constructor.name}-${B.constructor.name}`;
+    return this.collisionMap[key].detection(A, B);
   }
 
-  handleCollision(A: RigidBody, B: RigidBody) {
+  handleCollision(A: RigidBody, B: RigidBody): void {
     const key = `${A.constructor.name}-${B.constructor.name}`;
-    const handlers = this.collisionMap[key];
 
-    if (handlers) {
-      const isCollisionDetected = handlers.detectionHandler(A, B);
-      if (isCollisionDetected) {
-        const manifold = handlers.manifoldHandler(A, B);
-        var rv = Vec.sub(B.velocity, A.velocity);
+    const manifold = this.collisionMap[key].manifold(A, B);
+    if (manifold) {
+      const rv = Vec.sub(B.velocity, A.velocity);
 
-        // normal vector (change for collision types)
-        var normal = manifold.normal;
-        //
-        var nv = Vec.dot(rv, normal);
-        if (nv > 0) return;
+      // normal vector (change for collision types)
+      const normal = manifold.normal;
+      const nv = Vec.dot(rv, normal);
+      if (nv > 0) return;
 
-        var e = Math.min(A.material.restitution, B.material.restitution);
-        // impulse scalar
-        var i = (-(1 + e) * nv) / (1 / A.massData.mass + 1 / B.massData.mass);
-        var impulse = Vec.mul(normal, i);
-        var mass_sum = A.massData.mass + B.massData.mass;
-        var ratio = A.massData.mass / mass_sum;
-        A.velocity = Vec.sub(A.velocity, Vec.mul(impulse, ratio));
-        ratio = B.massData.mass / mass_sum;
-        A.velocity = Vec.sub(B.velocity, Vec.mul(impulse, ratio));
-      }
-    } else {
-      // Handle default case or throw an error
-      console.error(`Collision handlers not found for ${key}`);
+      const e = Math.min(A.material.restitution, B.material.restitution);
+      // impulse scalar
+      const i = (-(1 + e) * nv) / (1 / A.massData.mass + 1 / B.massData.mass);
+      const impulse = Vec.mul(normal, i);
+      const mass_sum = A.massData.mass + B.massData.mass;
+      let ratio = A.massData.mass / mass_sum;
+      A.velocity = Vec.sub(A.velocity, Vec.mul(impulse, ratio));
+      ratio = B.massData.mass / mass_sum;
+      B.velocity = Vec.add(B.velocity, Vec.mul(impulse, ratio));
     }
   }
 
@@ -64,23 +61,3 @@ export class CollisionHandler {
     B.position = Vec.add(B.position, Vec.mul(correction, A.massData.iMass));
   }
 }
-var cMap = new CollisionHandler();
-
-cMap.registerCollisionHandler(
-  Circle,
-  Circle,
-  DH.detectCircleCircleCollision,
-  ManifoldFactory.circleCircle
-);
-cMap.registerCollisionHandler(
-  Circle,
-  AABB,
-  DH.detectAABBCircleCollision,
-  ManifoldFactory.AABBCircle
-);
-cMap.registerCollisionHandler(
-  AABB,
-  AABB,
-  DH.detectAABBAABBCollision,
-  ManifoldFactory.AABBAABB
-);

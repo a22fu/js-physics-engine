@@ -5,9 +5,10 @@ import { RigidBody } from "../bodies/RigidBody";
 export class Manifold {
   A: any;
   B: any;
-  pen: number;
+  penetration: number;
   normal: Vec;
-  constructor() {
-    //unused constructor create from the factory methods
+  constructor(A: RigidBody, B: RigidBody) {
+    this.A = A;
+    this.B = B;
   }
 }

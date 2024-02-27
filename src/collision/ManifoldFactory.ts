@@ -8,34 +8,30 @@ import { Manifold } from "./Manifold";
 export class ManifoldFactory {
   A: any;
   B: any;
-  pen: number;
+  penetration: number;
   normal: Vec;
   constructor() {}
 
-  static circleCircle(circle1, circle2) {
-    var m = new Manifold();
-    m.A = circle1;
-    m.B = circle2;
+  static circleCircle(circle1: Circle, circle2: Circle) {
+    let m = new Manifold(circle1, circle2);
 
-    var n = Vec.sub(m.B.position, m.A.position);
-    var r = m.A.radius + m.B.radius;
-    r *= r;
-    if (Vec.magSqr(n) > r) return false;
-
+    const n = Vec.sub(m.B.position, m.A.position);
+    const r = m.A.radius + m.B.radius;
     var d = Vec.mag(n);
+
     if (d != 0) {
-      m.pen = r - d;
+      m.penetration = r - d;
       m.normal = { x: n.x / d, y: n.y / d };
-      return true;
+      return m;
     } else {
-      m.pen = 0;
+      m.penetration = 0;
       m.normal = { x: 1, y: 1 };
-      return true;
+      return m;
     }
   }
 
-  static AABBCircle(aabb, circle) {
-    var m = new Manifold();
+  static AABBCircle(aabb: AABB, circle: Circle) {
+    var m = new Manifold(aabb, circle);
 
     m.A = circle;
     m.B = aabb;
@@ -74,16 +70,16 @@ export class ManifoldFactory {
 
     if (inside) {
       m.normal = Vec.sub({ x: 0, y: 0 }, n);
-      m.pen = r - d;
+      m.penetration = r - d;
     } else {
       m.normal = n;
-      m.pen = r - d;
+      m.penetration = r - d;
     }
     return true;
   }
 
   static AABBAABB(aabb1, aabb2) {
-    var m = new Manifold();
+    var m = new Manifold(aabb1, aabb2);
 
     m.A = aabb1;
     m.B = aabb2;
@@ -110,13 +106,13 @@ export class ManifoldFactory {
             m.normal = { x: -1, y: 0 };
           } else {
             m.normal = { x: 0, y: 0 };
-            m.pen = x_overlap;
+            m.penetration = x_overlap;
             return true;
           }
         } else {
           if (n.y < 0) m.normal = { x: 0, y: -1 };
           else m.normal = { x: 0, y: 1 };
-          m.pen = y_overlap;
+          m.penetration = y_overlap;
           return true;
         }
       }
