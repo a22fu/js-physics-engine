@@ -1,2 +1,2 @@
 # physics-engine
-A JavaScript project
+Simple (for now) 2d physics engine for js
