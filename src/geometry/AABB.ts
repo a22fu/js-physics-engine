@@ -3,19 +3,15 @@ import { RigidBody } from "../bodies/RigidBody";
 
 // Axis Aligned Bounding Box, simple rectangle perpendicular to both axes
 export class AABB extends RigidBody {
-  min: Vec;
-  max: Vec;
+  min: Vec = { x: 0, y: 0 };
+  max: Vec = { x: 0, y: 0 };
   length: number;
   height: number;
-  AABBOptions = {
-    max: { x: 0, y: 0 },
-    min: { x: 0, y: 0 },
-  };
 
   constructor(options: any) {
     super(options);
-    this.min = options.min || this.AABBOptions.min;
-    this.max = options.max || this.AABBOptions.max;
+    this.min = options.min || this.min;
+    this.max = options.max || this.max;
     this.length = this.max.x - this.min.x;
     this.height = this.max.y - this.min.y;
     this.position = {

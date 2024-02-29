@@ -21,6 +21,10 @@ export class CollisionHandler {
       manifold: ManifoldFactory.circleAABB,
       detection: DH.detectCircleAABBCollision,
     },
+    "AABB-AABB": {
+      manifold: ManifoldFactory.aabbAABB,
+      detection: DH.detectAABBAABBCollision,
+    },
   };
 
   detectCollision(A: RigidBody, B: RigidBody): boolean {
@@ -30,37 +34,39 @@ export class CollisionHandler {
 
   handleCollision(A: RigidBody, B: RigidBody): void {
     const key = `${A.constructor.name}-${B.constructor.name}`;
-
     const manifold = this.collisionMap[key].manifold(A, B);
     if (manifold) {
       const rv = Vec.sub(B.velocity, A.velocity);
 
       // normal vector (change for collision types)
       const normal = manifold.normal;
+
       const nv = Vec.dot(rv, normal);
       if (nv > 0) return;
-      const e = 1;
+      const e = 0.8;
       // const e = Math.min(A.material.restitution, B.material.restitution);
       // impulse scalar
-      const j = (-(1 + e) * nv) / (1 / A.massData.mass + 1 / B.massData.mass);
+
+      const j = (-(1 + e) * nv) / (A.massData.iMass + B.massData.iMass);
       const impulse = Vec.mul(normal, j);
-      A.velocity = Vec.sub(A.velocity, Vec.mul(impulse, 1 / A.massData.mass));
-      B.velocity = Vec.add(B.velocity, Vec.mul(impulse, 1 / B.massData.mass));
+
+      A.velocity = Vec.sub(A.velocity, Vec.mul(impulse, A.massData.iMass));
+      B.velocity = Vec.add(B.velocity, Vec.mul(impulse, B.massData.iMass));
+      console.log(A.velocity);
+      console.log(B.velocity);
       this.PositionalCorrection(A, B, manifold);
     }
   }
 
   PositionalCorrection(A: RigidBody, B: RigidBody, manifold: Manifold) {
-    const percent = 0.2; // usually 20% to 80%
-    const slop = 0.01; // usually 0.01 to 0.1
+    const percent = 1; // usually 20% to 80%
 
     let correction = Vec.mul(
       manifold.normal,
-      (Math.max(manifold.penetration - slop, 0) /
-        (1 / A.massData.mass + 1 / B.massData.mass)) *
-        percent
+      (manifold.penetration / (A.massData.iMass + B.massData.iMass)) * percent
     );
-    A.position = Vec.sub(A.position, Vec.mul(correction, 1 / A.massData.mass));
-    B.position = Vec.add(B.position, Vec.mul(correction, 1 / B.massData.mass));
+
+    A.position = Vec.sub(A.position, Vec.mul(correction, A.massData.iMass));
+    B.position = Vec.add(B.position, Vec.mul(correction, B.massData.iMass));
   }
 }

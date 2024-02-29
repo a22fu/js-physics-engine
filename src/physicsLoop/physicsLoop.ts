@@ -4,6 +4,7 @@ import { Vec } from "../geometry/Vector";
 import { CollisionHandler } from "../collision/CollisionHandler.ts";
 
 export class physicsLoop {
+  gravity: Vec = { x: 0, y: 500 };
   canvas: HTMLCanvasElement;
   lastTime: number;
   bodies: RigidBody[] = [];
@@ -17,24 +18,28 @@ export class physicsLoop {
     this.bodies = bodies;
   }
 
+  startLoop() {
+    for (const body of this.bodies) {
+      if (body.massData.mass != Number.MAX_SAFE_INTEGER) {
+        body.applyForce(Vec.mul(this.gravity, body.massData.mass));
+      }
+    }
+    this.updateLoop();
+  }
+
   updatePhysics(deltaTime) {
+    for (let i = 0; i < this.bodies.length; i++) {
+      for (let j = i + 1; j < this.bodies.length; j++) {
+        if (this.cHandler.detectCollision(this.bodies[i], this.bodies[j])) {
+          this.cHandler.handleCollision(this.bodies[i], this.bodies[j]);
+        }
+      }
+    }
+
     for (const body of this.bodies) {
       // v += (1/m * F) * dt
       // x += v * dt
       body.updatePhysics(deltaTime);
-    }
-
-    for (let i = 0; i < this.bodies.length; i++) {
-      for (let j = i + 1; j < this.bodies.length; j++) {
-        if (this.cHandler.detectCollision(this.bodies[i], this.bodies[j])) {
-          // console.log("FOUND");
-          // console.log(this.bodies[i].velocity);
-          // console.log(this.bodies[j].velocity);
-          this.cHandler.handleCollision(this.bodies[i], this.bodies[j]);
-          // console.log(this.bodies[i].velocity);
-          // console.log(this.bodies[j].velocity);
-        }
-      }
     }
   }
 

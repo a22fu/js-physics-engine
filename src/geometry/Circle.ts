@@ -2,16 +2,11 @@ import { Vec } from "./Vector.ts";
 import { RigidBody } from "../bodies/RigidBody";
 
 export class Circle extends RigidBody {
-  radius: number;
-  circleOptions = {
-    radius: 0,
-    x: 0,
-    y: 0,
-  };
+  radius: number = 0;
 
   constructor(options: any) {
     super(options);
-    this.radius = options.radius || this.circleOptions.radius;
+    this.radius = options.radius || this.radius;
   }
 
   draw(canvas: HTMLCanvasElement) {
@@ -30,13 +25,10 @@ export class Circle extends RigidBody {
   }
 
   updatePhysics(deltaTime: number): void {
-    if (this.massData.mass && this.massData.mass != 0) {
-      this.velocity = Vec.add(
-        this.velocity,
-        Vec.mul(this.force, deltaTime / this.massData.mass)
-      );
-    } else {
-    }
+    this.velocity = Vec.add(
+      this.velocity,
+      Vec.mul(this.force, deltaTime * this.massData.iMass)
+    );
 
     this.position = Vec.add(this.position, Vec.mul(this.velocity, deltaTime));
   }

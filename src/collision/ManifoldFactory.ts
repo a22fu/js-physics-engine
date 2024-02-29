@@ -41,7 +41,7 @@ export class ManifoldFactory {
     closestPoint.x = pointClamp(circle.position.x, aabb.min.x, aabb.max.x);
     closestPoint.y = pointClamp(circle.position.y, aabb.min.y, aabb.max.y);
 
-    const n = Vec.sub(closestPoint, circle.position);
+    const n = Vec.sub(circle.position, closestPoint);
     const d = Vec.mag(n);
     const r = circle.radius;
 
@@ -56,10 +56,12 @@ export class ManifoldFactory {
   }
 
   static circleAABB(circle: Circle, aabb: AABB): Manifold {
-    return ManifoldFactory.aabbCircle(aabb, circle);
+    const manifold = ManifoldFactory.aabbCircle(aabb, circle);
+    manifold.normal = Vec.sub({ x: 0, y: 0 }, manifold.normal);
+    return manifold;
   }
 
-  static AABBAABB(aabb1, aabb2) {
+  static aabbAABB(aabb1, aabb2) {
     var m = new Manifold(aabb1, aabb2);
 
     m.A = aabb1;
