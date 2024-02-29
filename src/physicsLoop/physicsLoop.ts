@@ -64,11 +64,46 @@ export class physicsLoop {
 }
 
 export const materialMap = {
-  Rock: { density: 0.6, restitution: 0.1 },
-  Wood: { density: 0.3, restitution: 0.2 },
-  Metal: { density: 1.2, restitution: 0.05 },
-  BouncyBall: { density: 0.3, restitution: 0.8 },
-  SuperBall: { density: 0.3, restitution: 0.95 },
-  Pillow: { density: 0.1, restitution: 0.2 },
-  Static: { density: 0.0, restitution: 0.4 },
+  Rock: {
+    density: 0.6,
+    restitution: 0.1,
+    staticFriction: 0.4,
+    dynamicFriction: 0.3,
+  },
+  Wood: {
+    density: 0.3,
+    restitution: 0.2,
+    staticFriction: 0.4,
+    dynamicFriction: 0.3,
+  },
+  Metal: {
+    density: 1.2,
+    restitution: 0.05,
+    staticFriction: 0.4,
+    dynamicFriction: 0.3,
+  },
+  BouncyBall: {
+    density: 0.3,
+    restitution: 0.8,
+    staticFriction: 0.4,
+    dynamicFriction: 0.3,
+  },
+  SuperBall: {
+    density: 0.3,
+    restitution: 0.95,
+    staticFriction: 0.4,
+    dynamicFriction: 0.3,
+  },
+  Pillow: {
+    density: 0.1,
+    restitution: 0.2,
+    staticFriction: 0.4,
+    dynamicFriction: 0.3,
+  },
+  Static: {
+    density: 0.0,
+    restitution: 0.4,
+    staticFriction: 0.4,
+    dynamicFriction: 0.3,
+  },
 };

@@ -43,17 +43,44 @@ export class CollisionHandler {
 
       const nv = Vec.dot(rv, normal);
       if (nv > 0) return;
+
       const e = 0.8;
       // const e = Math.min(A.material.restitution, B.material.restitution);
-      // impulse scalar
 
+      // impulse scalar calcs
       const j = (-(1 + e) * nv) / (A.massData.iMass + B.massData.iMass);
       const impulse = Vec.mul(normal, j);
 
       A.velocity = Vec.sub(A.velocity, Vec.mul(impulse, A.massData.iMass));
       B.velocity = Vec.add(B.velocity, Vec.mul(impulse, B.massData.iMass));
-      console.log(A.velocity);
-      console.log(B.velocity);
+
+      // friction impulse
+      const frv = Vec.sub(A.velocity, B.velocity);
+      const tan = Vec.sub(rv, Vec.mul(normal, Vec.dot(rv, normal)));
+      const t = Vec.normalize(tan);
+
+      const jt = -Vec.dot(rv, t) / (A.massData.iMass + B.massData.iMass);
+
+      const mu = (A.material.staticFriction + B.material.staticFriction) / 2;
+
+      let frictionImpulse: Vec;
+      if (Math.abs(jt) < j * mu) {
+        frictionImpulse = Vec.mul(t, jt);
+      } else {
+        const dynamicFriction =
+          (A.material.dynamicFriction + B.material.dynamicFriction) / 2;
+        frictionImpulse = Vec.mul(t, -j * dynamicFriction);
+      }
+
+      A.velocity = Vec.sub(
+        A.velocity,
+        Vec.mul(frictionImpulse, A.massData.iMass)
+      );
+      B.velocity = Vec.add(
+        B.velocity,
+        Vec.mul(frictionImpulse, B.massData.iMass)
+      );
+
       this.PositionalCorrection(A, B, manifold);
     }
   }
