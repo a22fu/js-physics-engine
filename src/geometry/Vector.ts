@@ -12,6 +12,9 @@ export class Vec {
   static normalize: (v: Vec) => Vec;
   static distsqr: (v: Vec, w: Vec) => number;
   static dist: (v: Vec, w: Vec) => number;
+  static crossVS: (v: Vec, s: number) => Vec;
+  static crossSV: (s: number, v: Vec) => Vec;
+  static rotate: (v: Vec, r: number) => Vec;
 
   /**
    * Creates a vector
@@ -92,8 +95,8 @@ Vec.dot = function (v: Vec, w: Vec): number {
   return w.x * v.x + w.y * v.y;
 };
 
-/**
- * returns cross product of two vectors
+/** 2D cross product is weird
+ * returns cross product of two 2d vectors (magnitude of the hidden orthoganal vector)
  * @param v vector1
  * @param w vector2
  * @returns cross product of two vectors
@@ -102,6 +105,25 @@ Vec.cross = function (v: Vec, w: Vec): number {
   return v.x * w.y - v.y * w.x;
 };
 
+/**
+ * returns cross product of a vector and scalar
+ * @param v vector
+ * @param s scalar
+ * @returns cross product of a vector and scalar
+ */
+Vec.crossVS = function (v: Vec, s: number): Vec {
+  return { x: s * v.y, y: -s * v.x };
+};
+
+/**
+ * returns cross product of a scalar and vector
+ * @param s scalar
+ * @param v vector
+ * @returns cross product of a scalar and vector
+ */
+Vec.crossSV = function (s: number, v: Vec): Vec {
+  return { x: -s * v.y, y: s * v.x };
+};
 /**
  * returns a normalized vector
  * @param v vector
@@ -132,4 +154,17 @@ Vec.distsqr = function (v: Vec, w: Vec): number {
  */
 Vec.dist = function (v: Vec, w: Vec): number {
   return Math.sqrt((w.x - v.x) ^ (2 + (w.y - v.y)) ^ 2);
+};
+
+/**
+ * returns a vector made by rotating v r radians counterclockwise
+ * @param v vector1
+ * @param r radians
+ * @returns rotated vector by r radians counterclockwise
+ */
+Vec.rotate = function (v: Vec, r: number): Vec {
+  return {
+    x: Math.cos(r * v.x) - Math.sin(r * v.y),
+    y: Math.cos(r * v.y) + Math.sin(r * v.x),
+  };
 };

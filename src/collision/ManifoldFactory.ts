@@ -2,14 +2,10 @@ import { Vec } from "../geometry/Vector";
 import { Circle } from "../geometry/Circle";
 import { AABB } from "../geometry/AABB";
 
-import { RigidBody } from "../bodies/RigidBody";
 import { Manifold } from "./Manifold";
+import { Polygon } from "../geometry/Polygon";
 
 export class ManifoldFactory {
-  A: any;
-  B: any;
-  penetration: number;
-  normal: Vec;
   constructor() {}
 
   static circleCircle(circle1: Circle, circle2: Circle): Manifold {
@@ -18,6 +14,8 @@ export class ManifoldFactory {
     const n = Vec.sub(m.B.position, m.A.position);
     const d = Vec.mag(n);
     const r = circle1.radius + circle2.radius;
+
+    m.contactPoints.push(Vec.div(Vec.add(m.B.position, m.A.position), 2));
 
     if (d != 0) {
       m.penetration = r - d;
@@ -44,7 +42,7 @@ export class ManifoldFactory {
     const n = Vec.sub(circle.position, closestPoint);
     const d = Vec.mag(n);
     const r = circle.radius;
-
+    m.contactPoints.push(closestPoint);
     if (d != 0) {
       m.normal = {
         x: n.x / d,
@@ -61,7 +59,7 @@ export class ManifoldFactory {
     return manifold;
   }
 
-  static aabbAABB(aabb1, aabb2) {
+  static aabbAABB(aabb1: AABB, aabb2: AABB): Manifold {
     var m = new Manifold(aabb1, aabb2);
 
     m.A = aabb1;
@@ -90,15 +88,21 @@ export class ManifoldFactory {
           } else {
             m.normal = { x: 0, y: 0 };
             m.penetration = x_overlap;
-            return true;
+            return m;
           }
         } else {
           if (n.y < 0) m.normal = { x: 0, y: -1 };
           else m.normal = { x: 0, y: 1 };
           m.penetration = y_overlap;
-          return true;
+          return m;
         }
       }
     }
+    return m;
+  }
+  static polygonPolygon(polygonA: Polygon, polygonB: Polygon): Manifold {
+    let m = new Manifold(polygonA, polygonB);
+
+    return m;
   }
 }

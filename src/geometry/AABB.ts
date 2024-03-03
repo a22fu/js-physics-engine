@@ -1,12 +1,12 @@
 import { Vec } from "./Vector.ts";
-import { RigidBody } from "../bodies/RigidBody";
+import { Shape } from "../bodies/Shape.ts";
 
 // Axis Aligned Bounding Box, simple rectangle perpendicular to both axes
-export class AABB extends RigidBody {
+export class AABB extends Shape {
   min: Vec = { x: 0, y: 0 };
   max: Vec = { x: 0, y: 0 };
-  length: number;
-  height: number;
+  length: number = 0;
+  height: number = 0;
 
   constructor(options: any) {
     super(options);
@@ -18,6 +18,20 @@ export class AABB extends RigidBody {
       x: (this.min.x + this.max.x) / 2,
       y: (this.min.y + this.max.y) / 2,
     };
+    if (this.massData.mass == Number.MAX_VALUE) {
+      this.massData.inertia = Number.MAX_VALUE;
+      this.massData.iInertia = 0;
+    } else {
+      this.massData.inertia =
+        (1 / 12) * this.massData.mass * (this.length ** 2 + this.height ** 2);
+    }
+    if (this.massData.inertia == 0) {
+      this.massData.iInertia = Number.MAX_VALUE;
+    } else if (this.massData.inertia === Number.MAX_VALUE) {
+      this.massData.iInertia = 0;
+    } else {
+      this.massData.iInertia = 1 / this.massData.inertia;
+    }
   }
 
   draw(canvas: HTMLCanvasElement) {

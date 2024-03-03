@@ -1,16 +1,16 @@
-import { RigidBody } from "../bodies/RigidBody";
+import { Shape } from "../bodies/Shape";
 import { Circle } from "../geometry/Circle";
 import { Vec } from "../geometry/Vector";
 import { CollisionHandler } from "../collision/CollisionHandler.ts";
 
 export class physicsLoop {
-  gravity: Vec = { x: 0, y: 500 };
+  gravity: Vec = { x: 0, y: 400 };
   canvas: HTMLCanvasElement;
   lastTime: number;
-  bodies: RigidBody[] = [];
+  bodies: Shape[] = [];
   cHandler: CollisionHandler = new CollisionHandler();
 
-  constructor(canvas: HTMLCanvasElement, bodies: RigidBody[]) {
+  constructor(canvas: HTMLCanvasElement, bodies: Shape[]) {
     this.canvas = canvas;
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
@@ -20,7 +20,7 @@ export class physicsLoop {
 
   startLoop() {
     for (const body of this.bodies) {
-      if (body.massData.mass != Number.MAX_SAFE_INTEGER) {
+      if (body.massData.mass != Number.MAX_VALUE) {
         body.applyForce(Vec.mul(this.gravity, body.massData.mass));
       }
     }
@@ -39,6 +39,7 @@ export class physicsLoop {
     for (const body of this.bodies) {
       // v += (1/m * F) * dt
       // x += v * dt
+
       body.updatePhysics(deltaTime);
     }
   }
@@ -85,8 +86,8 @@ export const materialMap = {
   BouncyBall: {
     density: 0.3,
     restitution: 0.8,
-    staticFriction: 0.4,
-    dynamicFriction: 0.3,
+    staticFriction: 0.35,
+    dynamicFriction: 0.1,
   },
   SuperBall: {
     density: 0.3,

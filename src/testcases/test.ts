@@ -1,4 +1,4 @@
-import { RigidBody } from "../bodies/RigidBody";
+import { Shape } from "../bodies/Shape";
 import { Circle } from "../geometry/Circle";
 import { AABB } from "../geometry/AABB";
 import { physicsLoop, materialMap } from "../physicsLoop/physicsLoop";
@@ -16,6 +16,7 @@ async function play() {
       y: 0,
     },
     radius: 10,
+    angularVelocity: 0,
     material: materialMap.BouncyBall,
     massData: {
       mass: 5,
@@ -33,7 +34,7 @@ async function play() {
     },
     material: materialMap.BouncyBall,
     massData: {
-      mass: Number.MAX_SAFE_INTEGER,
+      mass: Number.MAX_VALUE,
     },
   };
   const AABB2Options = {
@@ -47,7 +48,7 @@ async function play() {
     },
     material: materialMap.BouncyBall,
     massData: {
-      mass: Number.MAX_SAFE_INTEGER,
+      mass: Number.MAX_VALUE,
     },
   };
   const AABB3Options = {
@@ -61,7 +62,7 @@ async function play() {
     },
     material: materialMap.BouncyBall,
     massData: {
-      mass: Number.MAX_SAFE_INTEGER,
+      mass: Number.MAX_VALUE,
     },
   };
   const AABB4Options = {
@@ -75,7 +76,7 @@ async function play() {
     },
     material: materialMap.BouncyBall,
     massData: {
-      mass: Number.MAX_SAFE_INTEGER,
+      mass: Number.MAX_VALUE,
     },
   };
   const wall = new AABB(AABBOptions);
@@ -83,9 +84,9 @@ async function play() {
   const wall3 = new AABB(AABB3Options);
   const wall4 = new AABB(AABB4Options);
 
-  let bodies: RigidBody[] = [];
+  let bodies: Shape[] = [];
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 0; i++) {
     let newOptions = JSON.parse(JSON.stringify(circleOptions));
 
     // Modify the properties of the newOptions object
@@ -108,6 +109,8 @@ async function play() {
       let newOptions = JSON.parse(JSON.stringify(circleOptions));
       newOptions.position.x = e.clientX;
       newOptions.position.y = e.clientY;
+      newOptions.velocity.x = 250;
+      newOptions.velocity.y = 250;
 
       let circle = new Circle(newOptions);
       circle.applyForce(Vec.mul(p.gravity, circle.massData.mass));

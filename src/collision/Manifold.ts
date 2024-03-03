@@ -1,13 +1,14 @@
 import { Vec } from "../geometry/Vector";
 
-import { RigidBody } from "../bodies/RigidBody";
+import { Shape } from "../bodies/Shape";
 
 export class Manifold {
   A: any;
   B: any;
   penetration: number;
   normal: Vec;
-  constructor(A: RigidBody, B: RigidBody) {
+  contactPoints: Vec[] = [];
+  constructor(A: Shape, B: Shape) {
     this.A = A;
     this.B = B;
   }
